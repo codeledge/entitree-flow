@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import ThemeRegistry from "./ThemeRegistry";
+import ThemeRegistry from "../themes/ThemeRegistry";
 
 export const metadata: Metadata = {
   title: "Entitree Flow",

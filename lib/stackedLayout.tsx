@@ -1,7 +1,5 @@
-import { Node } from "reactflow";
-
-export type ServerNode = Omit<Node, "position"> &
-  Partial<Pick<Node, "position">>;
+import { ServerNode } from "@/types/ServerNode";
+import { Node } from "@xyflow/react";
 
 export const stackedLayout = (
   nodes: ServerNode[],

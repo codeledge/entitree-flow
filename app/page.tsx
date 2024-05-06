@@ -1,88 +1,36 @@
 "use client";
-import { ServerNode, stackedLayout } from "@/lib/stackedLayout";
+import { familyEdges, familyNodes } from "@/fixtures/familyTree";
+import { treeLayout } from "@/lib/treeLayout";
 import { Layer } from "@/types/Layer";
 import { Button, ButtonGroup } from "@mui/joy";
 import Sheet from "@mui/joy/Sheet";
-import { incrementalId, randomWord } from "deverything";
-import { useCallback, useState } from "react";
-import ReactFlow, {
+import {
   addEdge,
   Background,
+  ColorMode,
   Controls,
-  Edge,
   OnConnect,
   Panel,
+  ReactFlow,
   useEdgesState,
   useNodesState,
-} from "reactflow";
+} from "@xyflow/react";
+import { useCallback, useState } from "react";
 
-import "reactflow/dist/base.css";
-
-const initialNodes: ServerNode[] = [
-  {
-    id: incrementalId().toString(),
-    data: { label: "Giorgio" },
-  },
-  {
-    id: incrementalId().toString(),
-    data: { label: "Giorgino" },
-  },
-];
-const initialEdges: Edge[] = [
-  {
-    id: incrementalId().toString(),
-    source: initialNodes[0].id,
-    label: `Giorgiamoci`,
-    target: initialNodes[1].id,
-  },
-];
+import "@xyflow/react/dist/style.css";
 
 const layer1 = {
   id: "1",
   isCurrent: true,
-  nodes: stackedLayout(initialNodes, {
-    direction: "TD",
-    size: 4,
-    margin: 0,
+  ...treeLayout(familyNodes[0], familyNodes, familyEdges, {
+    outEdgeFilter: (edge) => edge.label === "has",
+    sideAfterEdgeFilter: (edge) => edge.label === "married to",
   }),
-  edges: initialEdges,
-};
-
-const topNodes: ServerNode[] = [
-  {
-    id: incrementalId().toString(),
-    position: { x: 0, y: 0 },
-    data: { label: randomWord() },
-  },
-  {
-    id: incrementalId().toString(),
-    position: { x: 200, y: 100 },
-    data: { label: randomWord() },
-  },
-];
-
-const topEdges: Edge[] = [
-  {
-    id: incrementalId().toString(),
-    source: topNodes[0].id,
-    label: `Figuriamocu`,
-    target: topNodes[1].id,
-  },
-];
-
-const layer2 = {
-  id: "2",
-  isCurrent: true,
-  nodes: stackedLayout(topNodes, {
-    direction: "TD",
-    size: 4,
-    margin: 0,
-  }),
-  edges: topEdges,
 };
 
 export default function Home() {
-  const [layers, setLayers] = useState<Layer[]>([layer1, layer2]);
+  const [colorMode, setColorMode] = useState<ColorMode>("dark");
+  const [layers, setLayers] = useState<Layer[]>([layer1]);
   const [nodes, setNodes, onNodesChange] = useNodesState(
     layers.map((l) => l.nodes).flat()
   );
@@ -107,35 +55,46 @@ export default function Home() {
     >
       <Sheet
         sx={{
-          width: "80vw",
-          height: "80vh",
-          mx: "auto",
-          my: 4,
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-          borderRadius: "sm",
-          boxShadow: "md",
-          ".react-flow__controls-button": {
-            background: "lightgrey",
-            borderBottom: "none",
-          },
-          ".react-flow__controls": {
-            background: "lightgrey",
-          },
+          alignItems: "center",
+          justifyContent: "space-between",
+          position: "fixed",
+          top: 0,
+          width: "100vw",
+          height: "var(--Header-height)",
+          zIndex: 9998,
+          p: 2,
+          gap: 1,
+          borderBottom: "1px solid",
+          borderColor: "background.level3",
+          boxShadow: "sm",
+        }}
+      >
+        Hello
+      </Sheet>
+      <Sheet
+        sx={{
+          width: "100vw",
+          height: "calc(100vh - var(--Header-height))",
+          marginTop: "var(--Header-height)",
+          // ".react-flow__controls-button": {
+          //   background: "lightgrey",
+          //   borderBottom: "none",
+          // },
+          // ".react-flow__controls": {
+          //   background: "lightgrey",
+          // },
           ".react-flow__node": {
-            px: 2,
-            py: 1,
+            p: "5px",
             borderRadius: "md",
-            background: "#111",
+            // background: "#111",
           },
-          ".react-flow__edge-text": {
-            fill: "white",
-            fontSize: "xs",
-          },
-          ".react-flow__edge-textbg": {
-            fill: "#111",
-          },
+          // ".react-flow__edge-text": {
+          //   fill: "white",
+          //   fontSize: "xs",
+          // },
+          // ".react-flow__edge-textbg": {
+          //   fill: "#111",
+          // },
         }}
         variant="outlined"
       >
@@ -146,6 +105,7 @@ export default function Home() {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           fitView
+          colorMode={colorMode}
           proOptions={{
             hideAttribution: true,
           }}
@@ -158,7 +118,21 @@ export default function Home() {
               Layers
               <ButtonGroup orientation="vertical">
                 {layers.map((layer) => (
-                  <Button key={layer.id}>{layer.id}</Button>
+                  <Button
+                    key={layer.id}
+                    onClick={() => {
+                      setLayers((layers) => {
+                        return layers.map((l) => {
+                          if (l.id === layer.id) {
+                            return { ...l, isCurrent: true };
+                          }
+                          return { ...l, isCurrent: false };
+                        });
+                      });
+                    }}
+                  >
+                    {layer.id}
+                  </Button>
                 ))}
               </ButtonGroup>
             </Panel>
