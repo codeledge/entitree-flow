@@ -6,38 +6,47 @@ export const familyNodes: ServerNode[] = [
   {
     id: incrementalId().toString(),
     data: { label: "Granpa" },
+    type: "personNode",
   },
   {
     id: incrementalId().toString(),
     data: { label: "pa" },
+    type: "personNode",
   },
   {
     id: incrementalId().toString(),
     data: { label: "me" },
+    type: "personNode",
   },
   {
     id: incrementalId().toString(),
     data: { label: "gis" },
+    type: "personNode",
   },
   {
     id: incrementalId().toString(),
     data: { label: "alby" },
+    type: "personNode",
   },
   {
     id: incrementalId().toString(),
     data: { label: "mimmo" },
+    type: "personNode",
   },
   {
     id: incrementalId().toString(),
     data: { label: "sis" },
+    type: "personNode",
   },
   {
     id: incrementalId().toString(),
     data: { label: "uncle" },
+    type: "personNode",
   },
   {
     id: incrementalId().toString(),
     data: { label: "aunty" },
+    type: "personNode",
   },
 ];
 

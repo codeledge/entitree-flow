@@ -1,9 +1,9 @@
-import { ServerNode } from "@/types/ServerNode";
-import { Edge, Node } from "@xyflow/react";
+import { TreeNode } from "@/types/TreeNode";
+import { Edge } from "@xyflow/react";
 
 export const treeLayout = (
-  root: ServerNode,
-  nodes: ServerNode[],
+  root: TreeNode,
+  nodes: TreeNode[],
   edges: Edge[],
   options: {
     defaultNodeWidth?: number;
@@ -15,34 +15,51 @@ export const treeLayout = (
     inEdgeFilter?: (edge: Edge) => boolean;
   } = {}
 ): {
-  nodes: Node[];
+  nodes: TreeNode[];
   edges: Edge[];
 } => {
-  const nodeMinSpacing = options.nodeMinSpacing || 20;
+  const nodeMinSpacing = options.nodeMinSpacing || 80;
   const defaultNodeWidth = options.defaultNodeWidth || 150;
   const defaultNodeHeight = options.defaultNodeHeight || 30;
 
-  const serverNodesMap = nodes.reduce((acc, node) => {
+  const inputNodesMap = nodes.reduce((acc, node) => {
     acc[node.id] = node;
     return acc;
-  }, {} as Record<string, ServerNode>);
+  }, {} as Record<string, TreeNode>);
 
-  const disaplayNodesMap: Record<string, Node> = {
+  const outputNodesMap: Record<string, TreeNode> = {
     [root.id]: {
       ...root,
       width: root.width || defaultNodeWidth,
       height: root.height || defaultNodeHeight,
       position: { x: 0, y: 0 },
+      data: {
+        ...root.data,
+        groupTopY: 0,
+        groupLeftX: 0,
+        groupBottomY: root.height || defaultNodeHeight,
+        groupMaxHeight: root.height || defaultNodeHeight,
+        groupMaxWidth: root.width || defaultNodeWidth,
+        groupRightX: root.width || defaultNodeWidth,
+        marginBottom: nodeMinSpacing,
+        marginRight: nodeMinSpacing,
+        isRoot: true,
+      },
     },
   };
 
-  const drillChildren = (currentNode: Node, depth: number) => {
+  const drillChildren = (currentNode: TreeNode, depth: number) => {
     const childEdges = edges
       .filter((edge) => edge.source === currentNode.id)
       .filter(options?.outEdgeFilter || (() => true));
 
+    currentNode.data.childCount = childEdges.length;
+
+    console.log(currentNode.data.label, currentNode.data.showChildren);
+
+    if (currentNode.data.showChildren === false) return;
     childEdges.forEach((edge, edgeIndex) => {
-      const child = serverNodesMap[edge.target];
+      const child = inputNodesMap[edge.target];
 
       if (!child) {
         return;
@@ -51,11 +68,11 @@ export const treeLayout = (
       const previousEdge = childEdges[edgeIndex - 1];
       let x = currentNode.position.x;
       if (previousEdge) {
-        const previousNode = disaplayNodesMap[previousEdge.target];
+        const previousNode = outputNodesMap[previousEdge.target];
         x = previousNode.position!.x + previousNode.width! + nodeMinSpacing;
       }
 
-      disaplayNodesMap[child.id] = {
+      outputNodesMap[child.id] = {
         ...child,
         width: child.width || defaultNodeWidth,
         height: child.height || defaultNodeHeight,
@@ -63,16 +80,27 @@ export const treeLayout = (
           x,
           y: currentNode.position.y + currentNode.height! + nodeMinSpacing,
         },
+        data: {
+          ...child.data,
+          groupTopY: 0,
+          groupLeftX: 0,
+          groupBottomY: child.height || defaultNodeHeight,
+          groupMaxHeight: child.height || defaultNodeHeight,
+          groupMaxWidth: child.width || defaultNodeWidth,
+          groupRightX: child.width || defaultNodeWidth,
+          marginBottom: nodeMinSpacing,
+          marginRight: nodeMinSpacing,
+        },
       };
 
-      drillChildren(disaplayNodesMap[child.id], depth + 1);
+      drillChildren(outputNodesMap[child.id], depth + 1);
     });
   };
 
-  drillChildren(disaplayNodesMap[root.id], 1);
+  drillChildren(outputNodesMap[root.id], 1);
 
   return {
-    nodes: Object.values(disaplayNodesMap),
+    nodes: Object.values(outputNodesMap),
     edges: edges,
   };
 };
