@@ -1,11 +1,12 @@
 import { treeLayout } from "@/lib/treeLayout";
-import { TreeNode } from "@/types/TreeNode";
+import { LayoutTreeNode } from "@/types/TreeNode";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import { Button, Sheet } from "@mui/joy";
 import { Handle, NodeProps, Position, useReactFlow } from "@xyflow/react";
 
-export const PersonNode = (node: NodeProps<TreeNode>) => {
-  const { setNodes, getEdges, setEdges, getNodes } = useReactFlow<TreeNode>();
+export const PersonNode = (node: NodeProps<LayoutTreeNode>) => {
+  const { setNodes, getEdges, setEdges, getNodes } =
+    useReactFlow<LayoutTreeNode>();
 
   const toggleChildren = (id: string) => {
     const nodes = getNodes().map((node) => {

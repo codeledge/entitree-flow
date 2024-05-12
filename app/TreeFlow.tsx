@@ -1,12 +1,11 @@
 import { PersonNode } from "@/nodes/PersonNode";
 import { Layer } from "@/types/Layer";
-import { TreeNode } from "@/types/TreeNode";
+import { ClientTree } from "@/types/TreeNode";
 import { Button, ButtonGroup } from "@mui/joy";
 import {
   addEdge,
   Background,
   Controls,
-  Edge,
   OnConnect,
   Panel,
   ReactFlow,
@@ -18,16 +17,10 @@ import { useCallback, useState } from "react";
 
 const nodeTypes = { personNode: PersonNode };
 
-export const Flow = ({
-  initialNodes,
-  initialEdges,
-}: {
-  initialNodes: TreeNode[];
-  initialEdges: Edge[];
-}) => {
+export const TreeFlow = ({ initialTree }: { initialTree: ClientTree }) => {
   const [layers, setLayers] = useState<Layer[]>([]);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialTree.nodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialTree.edges);
 
   const onConnect: OnConnect = useCallback(
     (connection) => setEdges((eds) => addEdge(connection, eds)),

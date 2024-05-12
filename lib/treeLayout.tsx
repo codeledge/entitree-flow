@@ -1,9 +1,9 @@
-import { TreeNode } from "@/types/TreeNode";
+import { ClientTree, LayoutTreeNode, ServerTreeNode } from "@/types/TreeNode";
 import { Edge } from "@xyflow/react";
 
 export const treeLayout = (
-  root: TreeNode,
-  nodes: TreeNode[],
+  root: ServerTreeNode,
+  nodes: ServerTreeNode[],
   edges: Edge[],
   options: {
     defaultNodeWidth?: number;
@@ -14,10 +14,7 @@ export const treeLayout = (
     sideAfterEdgeFilter?: (edge: Edge) => boolean;
     inEdgeFilter?: (edge: Edge) => boolean;
   } = {}
-): {
-  nodes: TreeNode[];
-  edges: Edge[];
-} => {
+): ClientTree => {
   const nodeMinSpacing = options.nodeMinSpacing || 80;
   const defaultNodeWidth = options.defaultNodeWidth || 150;
   const defaultNodeHeight = options.defaultNodeHeight || 30;
@@ -25,9 +22,9 @@ export const treeLayout = (
   const inputNodesMap = nodes.reduce((acc, node) => {
     acc[node.id] = node;
     return acc;
-  }, {} as Record<string, TreeNode>);
+  }, {} as Record<string, ServerTreeNode>);
 
-  const outputNodesMap: Record<string, TreeNode> = {
+  const outputNodesMap: Record<string, LayoutTreeNode> = {
     [root.id]: {
       ...root,
       width: root.width || defaultNodeWidth,
@@ -48,7 +45,7 @@ export const treeLayout = (
     },
   };
 
-  const drillChildren = (currentNode: TreeNode, depth: number) => {
+  const drillChildren = (currentNode: LayoutTreeNode, depth: number) => {
     const childEdges = edges
       .filter((edge) => edge.source === currentNode.id)
       .filter(options?.outEdgeFilter || (() => true));

@@ -6,9 +6,12 @@
     "dev": "next dev -p 3080",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate": "prisma generate",
+    "migrate": "prisma migrate dev"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.1.0",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
@@ -16,11 +19,19 @@
     "@mui/icons-material": "^5.15.17",
     "@mui/joy": "5.0.0-beta.36",
     "@mui/material": "^5.15.17",
+    "@prisma/client": "^5.13.0",
+    "@tanstack/react-query": "^5.36.0",
+    "@trpc/client": "11.0.0-rc.366",
+    "@trpc/next": "11.0.0-rc.366",
+    "@trpc/react-query": "11.0.0-rc.366",
+    "@trpc/server": "11.0.0-rc.366",
     "@xyflow/react": "12.0.0-next.17",
     "deverything": "^0.50.0",
     "next": "14.2.3",
+    "next-auth": "5.0.0-beta.18",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -28,6 +39,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
+    "prisma": "^5.13.0",
     "typescript": "^5"
   }
 }

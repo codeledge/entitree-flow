@@ -1,8 +1,8 @@
-import { ServerNode } from "@/types/ServerNode";
+import { ServerTreeNode } from "@/types/TreeNode";
 import { Node } from "@xyflow/react";
 
 export const stackedLayout = (
-  nodes: ServerNode[],
+  nodes: ServerTreeNode[],
   options: {
     direction?: "TD" | "LR";
     margin?: number;

@@ -1,51 +1,51 @@
-import { ServerNode } from "@/types/ServerNode";
+import { ServerTreeNode } from "@/types/TreeNode";
 import { Edge } from "@xyflow/react";
 import { incrementalId } from "deverything";
 
-export const familyNodes: ServerNode[] = [
+export const familyNodes: ServerTreeNode[] = [
   {
     id: incrementalId().toString(),
-    data: { label: "Granpa" },
+    data: { id: incrementalId().toString(), label: "Granpa" },
     type: "personNode",
   },
   {
     id: incrementalId().toString(),
-    data: { label: "pa" },
+    data: { id: incrementalId().toString(), label: "pa" },
     type: "personNode",
   },
   {
     id: incrementalId().toString(),
-    data: { label: "me" },
+    data: { id: incrementalId().toString(), label: "me" },
     type: "personNode",
   },
   {
     id: incrementalId().toString(),
-    data: { label: "gis" },
+    data: { id: incrementalId().toString(), label: "gis" },
     type: "personNode",
   },
   {
     id: incrementalId().toString(),
-    data: { label: "alby" },
+    data: { id: incrementalId().toString(), label: "alby" },
     type: "personNode",
   },
   {
     id: incrementalId().toString(),
-    data: { label: "mimmo" },
+    data: { id: incrementalId().toString(), label: "mimmo" },
     type: "personNode",
   },
   {
     id: incrementalId().toString(),
-    data: { label: "sis" },
+    data: { id: incrementalId().toString(), label: "sis" },
     type: "personNode",
   },
   {
     id: incrementalId().toString(),
-    data: { label: "uncle" },
+    data: { id: incrementalId().toString(), label: "uncle" },
     type: "personNode",
   },
   {
     id: incrementalId().toString(),
-    data: { label: "aunty" },
+    data: { id: incrementalId().toString(), label: "aunty" },
     type: "personNode",
   },
 ];
