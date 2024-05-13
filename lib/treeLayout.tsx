@@ -1,9 +1,10 @@
 import { ClientTree, LayoutTreeNode, ServerTreeNode } from "@/types/TreeNode";
 import { Edge } from "@xyflow/react";
 
+type InputNode = ServerTreeNode | LayoutTreeNode;
+
 export const treeLayout = (
-  root: ServerTreeNode,
-  nodes: ServerTreeNode[],
+  nodes: InputNode[],
   edges: Edge[],
   options: {
     defaultNodeWidth?: number;
@@ -19,10 +20,19 @@ export const treeLayout = (
   const defaultNodeWidth = options.defaultNodeWidth || 150;
   const defaultNodeHeight = options.defaultNodeHeight || 30;
 
+  let root: InputNode | undefined;
+
   const inputNodesMap = nodes.reduce((acc, node) => {
     acc[node.id] = node;
+    if (node.data.isRoot) {
+      root = node;
+    }
     return acc;
-  }, {} as Record<string, ServerTreeNode>);
+  }, {} as Record<string, InputNode>);
+
+  if (!root) {
+    throw new Error("No root node found");
+  }
 
   const outputNodesMap: Record<string, LayoutTreeNode> = {
     [root.id]: {
@@ -49,10 +59,6 @@ export const treeLayout = (
     const childEdges = edges
       .filter((edge) => edge.source === currentNode.id)
       .filter(options?.outEdgeFilter || (() => true));
-
-    currentNode.data.childCount = childEdges.length;
-
-    console.log(currentNode.data.label, currentNode.data.showChildren);
 
     if (currentNode.data.showChildren === false) return;
     childEdges.forEach((edge, edgeIndex) => {

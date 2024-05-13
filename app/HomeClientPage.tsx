@@ -5,8 +5,6 @@ import { ReactFlowProvider } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { TreeFlow } from "./TreeFlow";
 
-// server side component
-
 export default function HomeClientPage({
   clientTree,
 }: {

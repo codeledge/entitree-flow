@@ -1,3 +1,4 @@
+import { familyEdges, familyNodes } from "@/fixtures/familyTree";
 import { z } from "zod";
 import { publicProcedure, trpcRouter } from "./trpcServer";
 
@@ -8,8 +9,29 @@ export const trpcRootRouter = trpcRouter({
         id: z.string(),
       })
     )
-    .query(async () => {
-      return;
+    .query(async ({ input }) => {
+      const node = familyNodes.find((node) => node.id === input.id)!;
+
+      const edges = familyEdges.filter(({ source }) => source === node.id);
+
+      node.data.childCount = edges.length;
+
+      return node;
+    }),
+  getChildren: publicProcedure
+    .input(
+      z.object({
+        parentId: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const edges = familyEdges.filter(
+        ({ source }) => source === input.parentId
+      );
+      const nodes = familyNodes.filter(({ id }) =>
+        edges.some(({ target }) => target === id)
+      );
+      return { nodes, edges };
     }),
 });
 

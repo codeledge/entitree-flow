@@ -1,11 +1,10 @@
-import * as trpc from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 
-export const trpcContext = async (opts: CreateNextContextOptions) => {
-  console.log("opts", opts);
+export const trpcContext = async ({ req }: CreateNextContextOptions) => {
   return {
-    session: {},
+    // @ts-ignore
+    session: 1 == 1 ? {} : 1 === 2 ? null : undefined,
   };
 };
 
-export type TrpcContext = trpc.inferAsyncReturnType<typeof trpcContext>;
+export type TrpcContext = Awaited<ReturnType<typeof trpcContext>>;

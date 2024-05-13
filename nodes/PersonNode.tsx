@@ -1,33 +1,42 @@
 import { treeLayout } from "@/lib/treeLayout";
+import { trpcReact } from "@/trpc/trpcReact";
 import { LayoutTreeNode } from "@/types/TreeNode";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import { Button, Sheet } from "@mui/joy";
 import { Handle, NodeProps, Position, useReactFlow } from "@xyflow/react";
 
 export const PersonNode = (node: NodeProps<LayoutTreeNode>) => {
-  const { setNodes, getEdges, setEdges, getNodes } =
+  const { setNodes, getEdges, setEdges, getNodes, getNode, updateNodeData } =
     useReactFlow<LayoutTreeNode>();
 
-  const toggleChildren = (id: string) => {
-    const nodes = getNodes().map((node) => {
-      if (node.id === id) {
-        return {
-          ...node,
-          data: {
-            ...node.data,
-            showChildren: !node.data.showChildren,
-          },
-        };
-      }
-      return node;
-    });
+  const utils = trpcReact.useUtils();
 
-    const layouted = treeLayout(nodes[0], nodes, getEdges(), {
-      outEdgeFilter: (edge) => edge.label === "has",
-      sideAfterEdgeFilter: (edge) => edge.label === "married to",
-    });
+  const toggleChildren = async (id: string) => {
+    const node = getNode(id)!;
 
-    setNodes(layouted.nodes);
+    if (!node.data.showChildren) {
+      const partialTree = await utils.getChildren.fetch({
+        parentId: id,
+      });
+      updateNodeData(id, {
+        showChildren: true,
+      });
+
+      const postNodes = [...getNodes(), ...partialTree.nodes];
+      const postEdges = [...getEdges(), ...partialTree.edges];
+
+      const layouted = treeLayout(postNodes, postEdges);
+      setNodes(layouted.nodes);
+      setEdges(layouted.edges);
+    } else {
+      updateNodeData(id, {
+        showChildren: false,
+      });
+      const postNodes = getNodes();
+      const layouted = treeLayout(postNodes, getEdges());
+      setNodes(layouted.nodes);
+      setEdges(layouted.edges);
+    }
   };
 
   return (

@@ -1,3 +1,4 @@
+import TrpcProvider from "@/trpc/TrpcProvider";
 import type { Metadata } from "next";
 import ThemeRegistry from "../themes/ThemeRegistry";
 
@@ -17,7 +18,9 @@ export default function RootLayout({
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </head>
       <body>
-        <ThemeRegistry>{children}</ThemeRegistry>
+        <ThemeRegistry>
+          <TrpcProvider>{children}</TrpcProvider>
+        </ThemeRegistry>
       </body>
     </html>
   );

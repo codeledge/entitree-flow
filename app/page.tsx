@@ -1,12 +1,14 @@
-import { familyEdges, familyNodes } from "@/fixtures/familyTree";
+import { familyNodes } from "@/fixtures/familyTree";
 import { treeLayout } from "@/lib/treeLayout";
+import { trpcCaller } from "@/trpc/trpcCaller";
 import HomeClientPage from "./HomeClientPage";
 
-export default function HomePage() {
-  const clientTree = treeLayout(familyNodes[0], familyNodes, familyEdges, {
-    outEdgeFilter: (edge) => edge.label === "has",
-    sideAfterEdgeFilter: (edge) => edge.label === "married to",
-  });
+export default async function HomePage() {
+  const root = await trpcCaller({}).getNode({ id: familyNodes[0].id });
+
+  root.data.isRoot = true;
+
+  const clientTree = treeLayout([root], []);
 
   return <HomeClientPage clientTree={clientTree} />;
 }

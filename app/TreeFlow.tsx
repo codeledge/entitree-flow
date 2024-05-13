@@ -37,6 +37,9 @@ export const TreeFlow = ({ initialTree }: { initialTree: ClientTree }) => {
       fitView
       colorMode={"dark"}
       nodeTypes={nodeTypes}
+      proOptions={{
+        hideAttribution: true,
+      }}
     >
       <Background />
       <Panel position="top-left">
