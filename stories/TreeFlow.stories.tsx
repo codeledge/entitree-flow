@@ -1,6 +1,6 @@
 import { randomServerTreeNode } from "@/fixtures/randomTreeNode";
 import type { Meta, StoryObj } from "@storybook/react";
-import { Edge } from "@xyflow/react";
+import { Edge, ReactFlowProvider } from "@xyflow/react";
 import { incrementalId } from "deverything";
 import HomeClientPage from "../app/HomeClientPage";
 import { familyEdges, familyNodes } from "../fixtures/familyTree";
@@ -10,11 +10,17 @@ import TrpcProvider from "../trpc/TrpcProvider";
 import { ClientTree, ServerTreeNode } from "../types/TreeNode";
 
 // Create a wrapper component with necessary providers
-const HomeClientPageWrapper = ({ clientTree }: { clientTree: ClientTree }) => {
+const HomeClientPageWrapper = ({
+  initialTree,
+}: {
+  initialTree: ClientTree;
+}) => {
   return (
     <TrpcProvider>
       <ThemeRegistry>
-        <HomeClientPage clientTree={clientTree} />
+        <ReactFlowProvider>
+          <HomeClientPage initialTree={initialTree} />
+        </ReactFlowProvider>
       </ThemeRegistry>
     </TrpcProvider>
   );
@@ -28,7 +34,7 @@ const meta: Meta<typeof HomeClientPageWrapper> = {
   },
   tags: ["autodocs"],
   argTypes: {
-    clientTree: {
+    initialTree: {
       control: "object",
       description: "Initial tree data with nodes and edges",
     },
@@ -59,13 +65,13 @@ const sampleTree: ClientTree = createSampleTree();
 
 export const Default: Story = {
   args: {
-    clientTree: sampleTree,
+    initialTree: sampleTree,
   },
 };
 
 export const Empty: Story = {
   args: {
-    clientTree: {
+    initialTree: {
       nodes: [],
       edges: [],
     },
@@ -74,7 +80,7 @@ export const Empty: Story = {
 
 export const SingleNode: Story = {
   args: {
-    clientTree: (() => {
+    initialTree: (() => {
       const singleNodeWithRoot = [
         { ...familyNodes[0], data: { ...familyNodes[0].data, isRoot: true } },
       ];
@@ -85,7 +91,7 @@ export const SingleNode: Story = {
 
 export const Onechild: Story = {
   args: {
-    clientTree: (() => {
+    initialTree: (() => {
       const nodes: ServerTreeNode[] = [
         {
           id: incrementalId().toString(),

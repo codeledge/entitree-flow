@@ -1,4 +1,6 @@
 "use client";
+import { useTreeLayout } from "@/hooks/useTreeLayout";
+import { ServerTreeNode } from "@/types/TreeNode";
 import BookIcon from "@mui/icons-material/Book";
 import BusinessIcon from "@mui/icons-material/Business";
 import CategoryIcon from "@mui/icons-material/Category";
@@ -31,6 +33,24 @@ interface WikidataItem {
 interface WikidataSearchResponse {
   search: WikidataItem[];
 }
+
+const wikidataItemToServerTreeNode = (item: WikidataItem): ServerTreeNode => {
+  const rootNode: ServerTreeNode = {
+    id: item.id,
+    data: {
+      id: item.id,
+      label: item.label,
+      description: item.description,
+      image: item.image,
+      isRoot: true,
+      childCount: 0,
+      parentCount: 0,
+    },
+    type: "personNode",
+  };
+
+  return rootNode;
+};
 
 const getItemIcon = (item: WikidataItem) => {
   const label = item.label?.toLowerCase() || "";
@@ -194,14 +214,12 @@ const getItemIcon = (item: WikidataItem) => {
   return <CategoryIcon sx={{ fontSize: 16 }} />;
 };
 
-export const WikidataSearch = ({
-  onItemSelect,
-}: {
-  onItemSelect?: (item: WikidataItem) => void;
-}) => {
+export const WikidataSearch = () => {
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState<WikidataItem[]>([]);
   const debounceTimeoutRef = useRef<NodeJS.Timeout>();
+
+  const { onLayout } = useTreeLayout();
 
   const fetchImageUrl = async (
     entityId: string
@@ -274,7 +292,9 @@ export const WikidataSearch = ({
     const imageUrl = await fetchImageUrl(item.id);
     const itemWithImage = { ...item, image: imageUrl };
 
-    onItemSelect?.(itemWithImage);
+    const rootNode = wikidataItemToServerTreeNode(itemWithImage);
+
+    onLayout([rootNode], []);
   };
 
   const handleInputChange = useCallback(

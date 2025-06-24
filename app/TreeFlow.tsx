@@ -1,4 +1,3 @@
-import { useTreeSync } from "@/hooks/useTreeSync";
 import { PersonNode } from "@/nodes/PersonNode";
 import { Layer } from "@/types/Layer";
 import { ClientTree } from "@/types/TreeNode";
@@ -11,6 +10,8 @@ import {
   OnConnect,
   Panel,
   ReactFlow,
+  useEdgesState,
+  useNodesState,
   useReactFlow,
 } from "@xyflow/react";
 import { useCallback, useState } from "react";
@@ -19,8 +20,8 @@ const nodeTypes = { personNode: PersonNode };
 
 export const TreeFlow = ({ initialTree }: { initialTree: ClientTree }) => {
   const [layers, setLayers] = useState<Layer[]>([]);
-  const { nodes, edges, onNodesChange, onEdgesChange, setEdges } =
-    useTreeSync(initialTree);
+  const [nodes, _setNodes, onNodesChange] = useNodesState(initialTree.nodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialTree.edges);
 
   const onConnect: OnConnect = useCallback(
     (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),

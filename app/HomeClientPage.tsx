@@ -1,53 +1,17 @@
 "use client";
-import { treeLayout } from "@/lib/treeLayout";
 import { ClientTree } from "@/types/TreeNode";
 import { Box, Typography } from "@mui/joy";
 import Sheet from "@mui/joy/Sheet";
-import { ReactFlowProvider } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useState } from "react";
 import { TreeFlow } from "./TreeFlow";
 import { WikidataSearch } from "./WikidataSearch";
 
-interface WikidataItem {
-  id: string;
-  label: string;
-  description: string;
-  url: string;
-  image?: string;
-}
-
-const createTreeFromWikidataItem = (item: WikidataItem): ClientTree => {
-  const rootNode = {
-    id: item.id,
-    data: {
-      id: item.id,
-      label: item.label,
-      description: item.description,
-      image: item.image,
-      isRoot: true,
-      childCount: 0,
-      parentCount: 0,
-    },
-    type: "personNode",
-    position: { x: 0, y: 0 },
-  };
-
-  return treeLayout([rootNode], []);
-};
-
 export default function HomeClientPage({
-  clientTree: initialTree,
+  initialTree,
 }: {
-  clientTree: ClientTree;
+  initialTree: ClientTree;
 }) {
-  // console.log(initialTree);
-  const [currentTree, setCurrentTree] = useState<ClientTree>(initialTree);
-
-  const handleItemSelect = (item: WikidataItem) => {
-    const newTree = createTreeFromWikidataItem(item);
-    setCurrentTree(newTree);
-  };
+  console.log(initialTree);
 
   return (
     <Sheet
@@ -110,7 +74,7 @@ export default function HomeClientPage({
             margin: "0 auto",
           }}
         >
-          <WikidataSearch onItemSelect={handleItemSelect} />
+          <WikidataSearch />
         </Box>
 
         {/* Right section - Placeholder for additional actions */}
@@ -132,9 +96,7 @@ export default function HomeClientPage({
           marginTop: "var(--Header-height)",
         }}
       >
-        <ReactFlowProvider>
-          <TreeFlow initialTree={currentTree} />
-        </ReactFlowProvider>
+        <TreeFlow initialTree={initialTree} />
       </Sheet>
     </Sheet>
   );

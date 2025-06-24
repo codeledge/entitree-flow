@@ -1,4 +1,5 @@
 import TrpcProvider from "@/trpc/TrpcProvider";
+import { ReactFlowProvider } from "@xyflow/react";
 import type { Metadata } from "next";
 import ThemeRegistry from "../themes/ThemeRegistry";
 
@@ -19,7 +20,9 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeRegistry>
-          <TrpcProvider>{children}</TrpcProvider>
+          <TrpcProvider>
+            <ReactFlowProvider>{children}</ReactFlowProvider>
+          </TrpcProvider>
         </ThemeRegistry>
       </body>
     </html>
