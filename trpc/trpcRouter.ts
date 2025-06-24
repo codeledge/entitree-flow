@@ -28,9 +28,15 @@ export const trpcRootRouter = trpcRouter({
       const edges = familyEdges.filter(
         ({ source }) => source === input.parentId
       );
-      const nodes = familyNodes.filter(({ id }) =>
-        edges.some(({ target }) => target === id)
-      );
+      const nodes = familyNodes
+        .filter(({ id }) => edges.some(({ target }) => target === id))
+        .map((node) => {
+          const childEdges = familyEdges.filter(
+            ({ source }) => source === node.id
+          );
+          node.data.childCount = childEdges.length;
+          return node;
+        });
       return { nodes, edges };
     }),
 });

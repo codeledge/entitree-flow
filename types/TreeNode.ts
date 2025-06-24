@@ -4,6 +4,7 @@ export type ServerTreeNodeData = {
   id: string;
   label: string;
   description?: string;
+  image?: string;
 
   isAncestor?: boolean;
   isDescendant?: boolean;
@@ -25,8 +26,10 @@ export type ServerTreeNodeData = {
   showSideBefore?: boolean;
 };
 
-export type ServerTreeNode = Omit<Node<ServerTreeNodeData>, "position"> &
-  Partial<Pick<Node<ServerTreeNodeData>, "position">>;
+export type ServerTreeNode = Omit<
+  Node<ServerTreeNodeData>,
+  "position" | "children"
+>;
 
 export type LayoutTreeNode = Node<
   ServerTreeNodeData & {
@@ -38,10 +41,19 @@ export type LayoutTreeNode = Node<
     groupTopY: number;
     marginBottom: number;
     marginRight: number;
+    loadingChildren?: boolean;
+    loadingParents?: boolean;
+    loadingSideAfter?: boolean;
+    loadingSideBefore?: boolean;
   }
 >;
 
 export type ClientTree = {
   nodes: LayoutTreeNode[];
+  edges: Edge[];
+};
+
+export type ServerTree = {
+  nodes: ServerTreeNode[];
   edges: Edge[];
 };

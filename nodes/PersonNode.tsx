@@ -1,47 +1,98 @@
-import { treeLayout } from "@/lib/treeLayout";
+import { useTreeLayout } from "@/hooks/useTreeLayout";
 import { trpcReact } from "@/trpc/trpcReact";
-import { LayoutTreeNode } from "@/types/TreeNode";
+import { LayoutTreeNode, ServerTree } from "@/types/TreeNode";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import { Button, Sheet } from "@mui/joy";
-import { Handle, NodeProps, Position, useReactFlow } from "@xyflow/react";
+import PersonIcon from "@mui/icons-material/Person";
+import { Avatar, Box, Button, Sheet, Typography } from "@mui/joy";
+import { NodeProps, useReactFlow } from "@xyflow/react";
+import { useCallback } from "react";
 
 export const PersonNode = (node: NodeProps<LayoutTreeNode>) => {
-  const { setNodes, getEdges, setEdges, getNodes, getNode, updateNodeData } =
+  const { getEdges, getNodes, getNode, updateNodeData } =
     useReactFlow<LayoutTreeNode>();
+
+  const { onLayout } = useTreeLayout();
+
+  const onCollapse = useCallback(
+    (nodeId?: string) => {
+      const postNodes = getNodes().map((node) => {
+        if (node.id === nodeId) {
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              showChildren: false,
+            },
+          };
+        }
+        return node;
+      });
+
+      onLayout(postNodes, getEdges());
+    },
+    [getNodes, onLayout, getEdges]
+  );
+
+  const onExpand = useCallback(
+    (sourceId: string, addTree: ServerTree) => {
+      const nodes = getNodes();
+
+      const layoutNodes = nodes.map((node) => {
+        if (node.id === sourceId) {
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              showChildren: true,
+              loadingChildren: false,
+            },
+          };
+        }
+        return node;
+      });
+
+      const preNodes = [...layoutNodes, ...addTree.nodes];
+      const preEdges = [...getEdges(), ...addTree.edges];
+
+      onLayout(preNodes, preEdges);
+    },
+    [getNodes, getEdges, onLayout]
+  );
 
   const utils = trpcReact.useUtils();
 
   const toggleChildren = async (id: string) => {
-    const node = getNode(id)!;
+    const node = getNode(id);
+    if (!node) {
+      return;
+    }
 
     if (!node.data.showChildren) {
+      updateNodeData(id, {
+        loadingChildren: true,
+      });
+
       const partialTree = await utils.getChildren.fetch({
         parentId: id,
       });
-      updateNodeData(id, {
-        showChildren: true,
-      });
 
-      const postNodes = [...getNodes(), ...partialTree.nodes];
-      const postEdges = [...getEdges(), ...partialTree.edges];
-
-      const layouted = treeLayout(postNodes, postEdges);
-      setNodes(layouted.nodes);
-      setEdges(layouted.edges);
+      onExpand(id, partialTree as ServerTree);
     } else {
-      updateNodeData(id, {
-        showChildren: false,
-      });
-      const postNodes = getNodes();
-      const layouted = treeLayout(postNodes, getEdges());
-      setNodes(layouted.nodes);
-      setEdges(layouted.edges);
+      onCollapse(id);
     }
   };
 
   return (
-    <Sheet sx={{ p: 1, borderRadius: 10, border: "1px solid lightgrey" }}>
-      <Handle type="target" position={Position.Top} />
+    <Sheet
+      sx={{
+        borderRadius: 8,
+        border: "1px solid lightgrey",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
+    >
       {!!node.data.parentCount && (
         <Button
           onClick={() => {}}
@@ -61,8 +112,70 @@ export const PersonNode = (node: NodeProps<LayoutTreeNode>) => {
           <ArrowDropUpIcon /> {node.data.parentCount}
         </Button>
       )}
-      {node.data.label}
-      <Handle type="source" position={Position.Bottom} />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "12px",
+          flex: 1,
+          padding: "8px",
+        }}
+      >
+        <Avatar
+          src={node.data.image}
+          alt={node.data.label}
+          sx={{
+            flexShrink: 0,
+            width: 80,
+            height: 80,
+            borderRadius: "6px",
+          }}
+        >
+          <PersonIcon />
+        </Avatar>
+        <Box
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            level="body-sm"
+            fontWeight="lg"
+            sx={{
+              wordBreak: "break-word",
+              lineHeight: 1.2,
+              display: "flex",
+              alignItems: "flex-start",
+            }}
+          >
+            {node.data.label}
+          </Typography>
+          {node.data.description && (
+            <Typography
+              level="body-xs"
+              color="neutral"
+              sx={{
+                mt: 0.5,
+                fontSize: "0.7rem",
+                lineHeight: 1.3,
+                wordBreak: "break-word",
+                overflowWrap: "break-word",
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {node.data.description}
+            </Typography>
+          )}
+        </Box>
+      </Box>
       {!!node.data.childCount && (
         <Button
           onClick={() => {
@@ -81,7 +194,13 @@ export const PersonNode = (node: NodeProps<LayoutTreeNode>) => {
           variant="plain"
           color="neutral"
         >
-          <ArrowDropUpIcon /> {node.data.childCount}
+          {node.data.loadingChildren ? (
+            <>loading</>
+          ) : (
+            <>
+              <ArrowDropUpIcon /> {node.data.childCount}
+            </>
+          )}
         </Button>
       )}
     </Sheet>

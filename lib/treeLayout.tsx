@@ -1,7 +1,8 @@
 import { ClientTree, LayoutTreeNode, ServerTreeNode } from "@/types/TreeNode";
 import { Edge } from "@xyflow/react";
+import { HashMap } from "deverything";
 
-type InputNode = ServerTreeNode | LayoutTreeNode;
+export type InputNode = ServerTreeNode | LayoutTreeNode;
 
 export const treeLayout = (
   nodes: InputNode[],
@@ -17,8 +18,8 @@ export const treeLayout = (
   } = {}
 ): ClientTree => {
   const nodeMinSpacing = options.nodeMinSpacing || 80;
-  const defaultNodeWidth = options.defaultNodeWidth || 150;
-  const defaultNodeHeight = options.defaultNodeHeight || 30;
+  const defaultNodeWidth = options.defaultNodeWidth || 250;
+  const defaultNodeHeight = options.defaultNodeHeight || 100;
 
   let root: InputNode | undefined;
 
@@ -34,26 +35,31 @@ export const treeLayout = (
     throw new Error("No root node found");
   }
 
-  const outputNodesMap: Record<string, LayoutTreeNode> = {
+  const rootWidth = root.width || defaultNodeWidth;
+  const rootHeight = root.height || defaultNodeHeight;
+
+  const outputNodesMap: HashMap<LayoutTreeNode> = {
     [root.id]: {
       ...root,
-      width: root.width || defaultNodeWidth,
-      height: root.height || defaultNodeHeight,
+      width: rootWidth,
+      height: rootHeight,
       position: { x: 0, y: 0 },
       data: {
         ...root.data,
         groupTopY: 0,
         groupLeftX: 0,
-        groupBottomY: root.height || defaultNodeHeight,
-        groupMaxHeight: root.height || defaultNodeHeight,
-        groupMaxWidth: root.width || defaultNodeWidth,
-        groupRightX: root.width || defaultNodeWidth,
+        groupBottomY: rootHeight,
+        groupMaxHeight: rootHeight,
+        groupMaxWidth: rootWidth,
+        groupRightX: rootWidth,
         marginBottom: nodeMinSpacing,
         marginRight: nodeMinSpacing,
         isRoot: true,
       },
     },
   };
+
+  const outputEdgesMap: HashMap<Edge> = {};
 
   const drillChildren = (currentNode: LayoutTreeNode, depth: number) => {
     const childEdges = edges
@@ -75,6 +81,8 @@ export const treeLayout = (
         x = previousNode.position!.x + previousNode.width! + nodeMinSpacing;
       }
 
+      outputEdgesMap[edge.id] = edge;
+
       outputNodesMap[child.id] = {
         ...child,
         width: child.width || defaultNodeWidth,
@@ -82,6 +90,10 @@ export const treeLayout = (
         position: {
           x,
           y: currentNode.position.y + currentNode.height! + nodeMinSpacing,
+        },
+        style: {
+          width: child.width || defaultNodeWidth,
+          height: child.height || defaultNodeHeight,
         },
         data: {
           ...child.data,
@@ -104,6 +116,6 @@ export const treeLayout = (
 
   return {
     nodes: Object.values(outputNodesMap),
-    edges: edges,
+    edges: Object.values(outputEdgesMap),
   };
 };

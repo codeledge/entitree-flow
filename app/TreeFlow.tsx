@@ -1,3 +1,4 @@
+import { useTreeSync } from "@/hooks/useTreeSync";
 import { PersonNode } from "@/nodes/PersonNode";
 import { Layer } from "@/types/Layer";
 import { ClientTree } from "@/types/TreeNode";
@@ -5,12 +6,11 @@ import { Button, ButtonGroup } from "@mui/joy";
 import {
   addEdge,
   Background,
+  Connection,
   Controls,
   OnConnect,
   Panel,
   ReactFlow,
-  useEdgesState,
-  useNodesState,
   useReactFlow,
 } from "@xyflow/react";
 import { useCallback, useState } from "react";
@@ -19,11 +19,11 @@ const nodeTypes = { personNode: PersonNode };
 
 export const TreeFlow = ({ initialTree }: { initialTree: ClientTree }) => {
   const [layers, setLayers] = useState<Layer[]>([]);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialTree.nodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialTree.edges);
+  const { nodes, edges, onNodesChange, onEdgesChange, setEdges } =
+    useTreeSync(initialTree);
 
   const onConnect: OnConnect = useCallback(
-    (connection) => setEdges((eds) => addEdge(connection, eds)),
+    (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges]
   );
 
@@ -35,11 +35,18 @@ export const TreeFlow = ({ initialTree }: { initialTree: ClientTree }) => {
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       fitView
+      fitViewOptions={{
+        padding: 0.1,
+        includeHiddenNodes: false,
+        minZoom: 0.5,
+        maxZoom: 2,
+      }}
       colorMode={"dark"}
       nodeTypes={nodeTypes}
       proOptions={{
         hideAttribution: true,
       }}
+      // debug
     >
       <Background />
       <Panel position="top-left">

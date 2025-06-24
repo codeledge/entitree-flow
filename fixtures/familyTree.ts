@@ -1,11 +1,17 @@
 import { ServerTreeNode } from "@/types/TreeNode";
 import { Edge } from "@xyflow/react";
-import { incrementalId } from "deverything";
+import { incrementalId, randomParagraph } from "deverything";
 
 export const familyNodes: ServerTreeNode[] = [
   {
     id: incrementalId().toString(),
-    data: { id: incrementalId().toString(), label: "Granpa" },
+    data: {
+      id: incrementalId().toString(),
+      label: "Granpa",
+      description: randomParagraph(),
+      childCount: 3,
+      parentCount: 1222,
+    },
     type: "personNode",
   },
   {

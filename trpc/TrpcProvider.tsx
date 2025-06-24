@@ -10,14 +10,14 @@ export default function Provider({ children }: { children: React.ReactNode }) {
     trpcReact.createClient({
       links: [
         loggerLink({
-          enabled: () => true,
+          enabled: () => false,
         }),
         httpBatchLink({
           url: "/api/trpc",
-          fetch: async (input, init?) => {
+          fetch: async (input, options) => {
             const fetch = getFetch();
             return fetch(input, {
-              ...init,
+              ...options,
               credentials: "include",
             });
           },
