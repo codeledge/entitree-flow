@@ -32,42 +32,66 @@ const familyNodes: ServerTreeNode[] = [
   },
   {
     id: "4",
-    data: { id: "4", label: "pa" },
+    data: {
+      id: "4",
+      label: "pa",
+    },
     type: "personNode",
   },
   {
     id: "5",
-    data: { id: "5", label: "me" },
+    data: {
+      id: "5",
+      label: "me",
+    },
     type: "personNode",
   },
   {
     id: "6",
-    data: { id: "6", label: "gis" },
+    data: {
+      id: "6",
+      label: "gis",
+    },
     type: "personNode",
   },
   {
     id: "7",
-    data: { id: "7", label: "alby" },
+    data: {
+      id: "7",
+      label: "alby",
+    },
     type: "personNode",
   },
   {
     id: "8",
-    data: { id: "8", label: "mimmo" },
+    data: {
+      id: "8",
+      label: "mimmo",
+    },
     type: "personNode",
   },
   {
     id: "9",
-    data: { id: "9", label: "sis" },
+    data: {
+      id: "9",
+      label: "sis",
+    },
     type: "personNode",
   },
   {
     id: "10",
-    data: { id: "10", label: "uncle" },
+    data: {
+      id: "10",
+      label: "uncle",
+    },
     type: "personNode",
   },
   {
     id: "11",
-    data: { id: "11", label: "aunty" },
+    data: {
+      id: "11",
+      label: "aunty",
+    },
     type: "personNode",
   },
 ];
@@ -89,7 +113,7 @@ const familyEdges: Edge[] = [
   {
     id: incrementalId().toString(),
     source: familyNodes[2].id,
-    label: `has`,
+    label: randomParagraph(),
     target: familyNodes[3].id,
   },
   {

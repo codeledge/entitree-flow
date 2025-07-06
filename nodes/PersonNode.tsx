@@ -4,7 +4,7 @@ import { LayoutTreeNode, ServerTree } from "@/types/TreeNode";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import PersonIcon from "@mui/icons-material/Person";
 import { Avatar, Box, Button, Sheet, Typography } from "@mui/joy";
-import { NodeProps, useReactFlow } from "@xyflow/react";
+import { Handle, NodeProps, Position, useReactFlow } from "@xyflow/react";
 import { useCallback } from "react";
 
 export const PersonNode = (node: NodeProps<LayoutTreeNode>) => {
@@ -91,8 +91,28 @@ export const PersonNode = (node: NodeProps<LayoutTreeNode>) => {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        position: "relative",
       }}
     >
+      {/* React Flow Handles */}
+      <Handle
+        type="target"
+        position={Position.Top}
+        style={{
+          background: "#64748b",
+          width: 8,
+          height: 8,
+          border: "2px solid #fff",
+        }}
+      />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        style={{
+          display: "none",
+        }}
+      />
+
       {!!node.data.parentCount && (
         <Button
           onClick={() => {}}

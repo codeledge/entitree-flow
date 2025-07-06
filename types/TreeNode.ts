@@ -24,6 +24,8 @@ export type ServerTreeNodeData = {
   showParents?: boolean;
   showSideAfter?: boolean;
   showSideBefore?: boolean;
+
+  allowRelationshipCreation?: boolean; // Default false - controls whether relationships can be created from this node
 };
 
 export type ServerTreeNode = Omit<

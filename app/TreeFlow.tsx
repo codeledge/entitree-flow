@@ -3,7 +3,6 @@ import { Layer } from "@/types/Layer";
 import { ClientTree } from "@/types/TreeNode";
 import { Button, ButtonGroup } from "@mui/joy";
 import {
-  addEdge,
   Background,
   BaseEdge,
   Connection,
@@ -11,7 +10,6 @@ import {
   EdgeLabelRenderer,
   EdgeProps,
   getBezierPath,
-  MarkerType,
   OnConnect,
   Panel,
   ReactFlow,
@@ -19,9 +17,7 @@ import {
   useNodesState,
   useReactFlow,
 } from "@xyflow/react";
-import { useCallback, useState } from "react";
-
-const nodeTypes = { personNode: PersonNode };
+import { useCallback, useMemo, useState } from "react";
 
 // Custom edge component to better display relationship labels
 const CustomEdge = ({
@@ -34,7 +30,6 @@ const CustomEdge = ({
   targetPosition,
   style = {},
   label,
-  markerEnd,
 }: EdgeProps) => {
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -52,10 +47,11 @@ const CustomEdge = ({
         path={edgePath}
         style={{
           ...style,
-          strokeWidth: 2,
+          strokeWidth: 4, // Thicker line
           stroke: "#64748b",
+          zIndex: -1, // Render behind all content
+          opacity: 0.5, // 0.5 opacity
         }}
-        markerEnd={markerEnd}
       />
       <EdgeLabelRenderer>
         <div
@@ -69,19 +65,20 @@ const CustomEdge = ({
             padding: "2px 6px",
             borderRadius: "4px",
             pointerEvents: "none",
-            zIndex: 1000,
+            zIndex: 10, // Render above edges but behind nodes
+            maxWidth: "200px", // Limit width to approximate node width
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
           }}
           className="nodrag nopan"
+          title={typeof label === "string" ? label : undefined} // Show full text on hover
         >
           {label}
         </div>
       </EdgeLabelRenderer>
     </>
   );
-};
-
-const edgeTypes = {
-  custom: CustomEdge,
 };
 
 export const TreeFlow = ({ initialTree }: { initialTree: ClientTree }) => {
@@ -91,38 +88,46 @@ export const TreeFlow = ({ initialTree }: { initialTree: ClientTree }) => {
     initialTree.edges.map((edge) => ({
       ...edge,
       type: "custom",
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        width: 20,
-        height: 20,
-        color: "#64748b",
-      },
       style: {
-        strokeWidth: 2,
+        strokeWidth: 4, // Thicker line
         stroke: "#64748b",
+        zIndex: -1, // Render behind all content
+        opacity: 0.5, // 0.5 opacity
       },
     }))
+  );
+
+  // Memoize nodeTypes and edgeTypes to prevent recreation on every render
+  const nodeTypes = useMemo(
+    () => ({
+      personNode: PersonNode,
+    }),
+    []
+  );
+
+  const edgeTypes = useMemo(
+    () => ({
+      custom: CustomEdge,
+    }),
+    []
   );
 
   const onConnect: OnConnect = useCallback(
     (connection: Connection) => {
       const newEdge = {
         ...connection,
+        id: `edge-${Date.now()}`, // Generate unique ID
         type: "custom",
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          width: 20,
-          height: 20,
-          color: "#64748b",
-        },
         style: {
-          strokeWidth: 2,
+          strokeWidth: 4, // Thicker line
           stroke: "#64748b",
+          zIndex: -1, // Render behind all content
+          opacity: 0.5, // 0.5 opacity
         },
       };
-      setEdges((eds) => addEdge(newEdge, eds));
+      setEdges((eds) => [...eds, newEdge]);
     },
-    [setEdges]
+    [setEdges, nodes]
   );
 
   return (
