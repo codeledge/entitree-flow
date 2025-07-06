@@ -5,8 +5,13 @@ import { Button, ButtonGroup } from "@mui/joy";
 import {
   addEdge,
   Background,
+  BaseEdge,
   Connection,
   Controls,
+  EdgeLabelRenderer,
+  EdgeProps,
+  getBezierPath,
+  MarkerType,
   OnConnect,
   Panel,
   ReactFlow,
@@ -18,13 +23,105 @@ import { useCallback, useState } from "react";
 
 const nodeTypes = { personNode: PersonNode };
 
+// Custom edge component to better display relationship labels
+const CustomEdge = ({
+  id,
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  style = {},
+  label,
+  markerEnd,
+}: EdgeProps) => {
+  const [edgePath, labelX, labelY] = getBezierPath({
+    sourceX,
+    sourceY,
+    sourcePosition,
+    targetX,
+    targetY,
+    targetPosition,
+  });
+
+  return (
+    <>
+      <BaseEdge
+        id={id}
+        path={edgePath}
+        style={{
+          ...style,
+          strokeWidth: 2,
+          stroke: "#64748b",
+        }}
+        markerEnd={markerEnd}
+      />
+      <EdgeLabelRenderer>
+        <div
+          style={{
+            position: "absolute",
+            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+            fontSize: 12,
+            fontWeight: 500,
+            background: "rgba(0, 0, 0, 0.8)",
+            color: "white",
+            padding: "2px 6px",
+            borderRadius: "4px",
+            pointerEvents: "none",
+            zIndex: 1000,
+          }}
+          className="nodrag nopan"
+        >
+          {label}
+        </div>
+      </EdgeLabelRenderer>
+    </>
+  );
+};
+
+const edgeTypes = {
+  custom: CustomEdge,
+};
+
 export const TreeFlow = ({ initialTree }: { initialTree: ClientTree }) => {
   const [layers, setLayers] = useState<Layer[]>([]);
   const [nodes, _setNodes, onNodesChange] = useNodesState(initialTree.nodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialTree.edges);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(
+    initialTree.edges.map((edge) => ({
+      ...edge,
+      type: "custom",
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        width: 20,
+        height: 20,
+        color: "#64748b",
+      },
+      style: {
+        strokeWidth: 2,
+        stroke: "#64748b",
+      },
+    }))
+  );
 
   const onConnect: OnConnect = useCallback(
-    (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
+    (connection: Connection) => {
+      const newEdge = {
+        ...connection,
+        type: "custom",
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 20,
+          height: 20,
+          color: "#64748b",
+        },
+        style: {
+          strokeWidth: 2,
+          stroke: "#64748b",
+        },
+      };
+      setEdges((eds) => addEdge(newEdge, eds));
+    },
     [setEdges]
   );
 
@@ -44,6 +141,7 @@ export const TreeFlow = ({ initialTree }: { initialTree: ClientTree }) => {
       }}
       colorMode={"dark"}
       nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
       proOptions={{
         hideAttribution: true,
       }}

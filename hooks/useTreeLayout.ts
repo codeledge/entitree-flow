@@ -1,6 +1,6 @@
 import { InputNode, treeLayout } from "@/lib/treeLayout";
 import { LayoutTreeNode } from "@/types/TreeNode";
-import { Edge, useReactFlow } from "@xyflow/react";
+import { Edge, MarkerType, useReactFlow } from "@xyflow/react";
 import { useCallback } from "react";
 
 export const useTreeLayout = () => {
@@ -10,8 +10,24 @@ export const useTreeLayout = () => {
     (preNodes: InputNode[], preEdges: Edge[]) => {
       const layouted = treeLayout(preNodes, preEdges);
 
+      // Ensure edges have proper styling and custom type
+      const styledEdges = layouted.edges.map((edge) => ({
+        ...edge,
+        type: "custom",
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 20,
+          height: 20,
+          color: "#64748b",
+        },
+        style: {
+          strokeWidth: 2,
+          stroke: "#64748b",
+        },
+      }));
+
       setNodes(layouted.nodes);
-      setEdges(layouted.edges);
+      setEdges(styledEdges);
 
       window.requestAnimationFrame(() => {
         fitView({

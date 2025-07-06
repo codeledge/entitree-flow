@@ -1,7 +1,5 @@
-import TrpcProvider from "@/trpc/TrpcProvider";
-import { ReactFlowProvider } from "@xyflow/react";
 import type { Metadata } from "next";
-import ThemeRegistry from "../themes/ThemeRegistry";
+import ClientProviders from "./ClientProviders";
 
 export const metadata: Metadata = {
   title: "Entitree Flow",
@@ -19,11 +17,7 @@ export default function RootLayout({
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </head>
       <body>
-        <ThemeRegistry>
-          <TrpcProvider>
-            <ReactFlowProvider>{children}</ReactFlowProvider>
-          </TrpcProvider>
-        </ThemeRegistry>
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );

@@ -4,11 +4,11 @@ import { trpcCaller } from "@/trpc/trpcCaller";
 import HomeClientPage from "./HomeClientPage";
 
 export default async function HomePage() {
-  const root = await trpcCaller({}).getNode({ id: familyNodes[0].id });
+  const { nodes, edges } = await trpcCaller({}).getNode({
+    id: familyNodes[2].id,
+  });
 
-  root.data.isRoot = true;
-
-  const clientTree = treeLayout([root], []);
+  const clientTree = treeLayout(nodes, edges);
 
   return <HomeClientPage initialTree={clientTree} />;
 }

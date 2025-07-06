@@ -10,13 +10,14 @@ export const trpcRootRouter = trpcRouter({
       })
     )
     .query(async ({ input }) => {
-      const node = familyNodes.find((node) => node.id === input.id)!;
+      const node = [...familyNodes];
 
-      const edges = familyEdges.filter(({ source }) => source === node.id);
+      const rootNode = node.find((node) => node.id === input.id)!;
+      rootNode.data.isRoot = true;
+      rootNode.data.showChildren = true;
+      rootNode.data.showParents = true;
 
-      node.data.childCount = edges.length;
-
-      return node;
+      return { nodes: node, edges: familyEdges };
     }),
   getChildren: publicProcedure
     .input(
@@ -34,8 +35,14 @@ export const trpcRootRouter = trpcRouter({
           const childEdges = familyEdges.filter(
             ({ source }) => source === node.id
           );
-          node.data.childCount = childEdges.length;
-          return node;
+
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              childCount: childEdges.length,
+            },
+          };
         });
       return { nodes, edges };
     }),

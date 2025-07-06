@@ -318,9 +318,18 @@ export const WikidataSearch = () => {
   );
 
   return (
-    <Box sx={{ width: "100%", maxWidth: 300, minWidth: 150 }}>
+    <Box
+      sx={{
+        width: "100%",
+        maxWidth: 300,
+        minWidth: 150,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <Autocomplete<WikidataItem>
-        placeholder="Search Wikidata items..."
+        placeholder="Search anything..."
         startDecorator={<SearchIcon />}
         endDecorator={loading && <CircularProgress size="sm" />}
         size="sm"

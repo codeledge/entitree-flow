@@ -2,66 +2,82 @@ import { ServerTreeNode } from "@/types/TreeNode";
 import { Edge } from "@xyflow/react";
 import { incrementalId, randomParagraph } from "deverything";
 
-export const familyNodes: ServerTreeNode[] = [
+const familyNodes: ServerTreeNode[] = [
   {
-    id: incrementalId().toString(),
+    id: "1",
     data: {
-      id: incrementalId().toString(),
-      label: "Granpa",
+      id: "1",
+      label: "Super Granpa",
       description: randomParagraph(),
-      childCount: 3,
-      parentCount: 1222,
     },
     type: "personNode",
   },
   {
-    id: incrementalId().toString(),
-    data: { id: incrementalId().toString(), label: "pa" },
+    id: "2",
+    data: {
+      id: "2",
+      label: "Super Granma",
+      description: randomParagraph(),
+    },
     type: "personNode",
   },
   {
-    id: incrementalId().toString(),
-    data: { id: incrementalId().toString(), label: "me" },
+    id: "3",
+    data: {
+      id: "3",
+      label: "Granpa",
+      description: randomParagraph(),
+    },
     type: "personNode",
   },
   {
-    id: incrementalId().toString(),
-    data: { id: incrementalId().toString(), label: "gis" },
+    id: "4",
+    data: { id: "4", label: "pa" },
     type: "personNode",
   },
   {
-    id: incrementalId().toString(),
-    data: { id: incrementalId().toString(), label: "alby" },
+    id: "5",
+    data: { id: "5", label: "me" },
     type: "personNode",
   },
   {
-    id: incrementalId().toString(),
-    data: { id: incrementalId().toString(), label: "mimmo" },
+    id: "6",
+    data: { id: "6", label: "gis" },
     type: "personNode",
   },
   {
-    id: incrementalId().toString(),
-    data: { id: incrementalId().toString(), label: "sis" },
+    id: "7",
+    data: { id: "7", label: "alby" },
     type: "personNode",
   },
   {
-    id: incrementalId().toString(),
-    data: { id: incrementalId().toString(), label: "uncle" },
+    id: "8",
+    data: { id: "8", label: "mimmo" },
     type: "personNode",
   },
   {
-    id: incrementalId().toString(),
-    data: { id: incrementalId().toString(), label: "aunty" },
+    id: "9",
+    data: { id: "9", label: "sis" },
+    type: "personNode",
+  },
+  {
+    id: "10",
+    data: { id: "10", label: "uncle" },
+    type: "personNode",
+  },
+  {
+    id: "11",
+    data: { id: "11", label: "aunty" },
     type: "personNode",
   },
 ];
 
-export const familyEdges: Edge[] = [
+const familyEdges: Edge[] = [
   {
     id: incrementalId().toString(),
     source: familyNodes[0].id,
     label: `has`,
-    target: familyNodes[1].id,
+    target: familyNodes[2].id,
   },
   {
     id: incrementalId().toString(),
@@ -69,22 +85,46 @@ export const familyEdges: Edge[] = [
     label: `has`,
     target: familyNodes[2].id,
   },
+
   {
     id: incrementalId().toString(),
     source: familyNodes[2].id,
-    label: `married to`,
+    label: `has`,
     target: familyNodes[3].id,
   },
   {
     id: incrementalId().toString(),
-    source: familyNodes[2].id,
+    source: familyNodes[3].id,
     label: `has`,
     target: familyNodes[4].id,
   },
   {
     id: incrementalId().toString(),
-    source: familyNodes[2].id,
-    label: `has`,
+    source: familyNodes[4].id,
+    label: `married to`,
     target: familyNodes[5].id,
   },
+  {
+    id: incrementalId().toString(),
+    source: familyNodes[4].id,
+    label: `has`,
+    target: familyNodes[6].id,
+  },
+  {
+    id: incrementalId().toString(),
+    source: familyNodes[4].id,
+    label: `has`,
+    target: familyNodes[7].id,
+  },
 ];
+
+familyNodes.forEach((node) => {
+  node.data.childCount = familyEdges.filter(
+    (edge) => edge.source === node.id
+  ).length;
+  node.data.parentCount = familyEdges.filter(
+    (edge) => edge.target === node.id
+  ).length;
+});
+
+export { familyEdges, familyNodes };
