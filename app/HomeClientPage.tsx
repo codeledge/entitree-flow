@@ -11,8 +11,6 @@ export default function HomeClientPage({
 }: {
   initialTree: ClientTree;
 }) {
-  console.log(initialTree);
-
   return (
     <Sheet
       sx={{

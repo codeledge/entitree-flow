@@ -1,4 +1,5 @@
 import { Edge, Node } from "@xyflow/react";
+import { PickRequired } from "deverything";
 
 export type ServerTreeNodeData = {
   id: string;
@@ -33,22 +34,23 @@ export type ServerTreeNode = Omit<
   "position" | "children"
 >;
 
-export type LayoutTreeNode = Node<
-  ServerTreeNodeData & {
-    groupBottomY: number;
-    groupLeftX: number;
-    groupMaxHeight: number;
-    groupMaxWidth: number;
-    groupRightX: number;
-    groupTopY: number;
-    marginBottom: number;
-    marginRight: number;
-    loadingChildren?: boolean;
-    loadingParents?: boolean;
-    loadingSideAfter?: boolean;
-    loadingSideBefore?: boolean;
-  }
->;
+export type LayoutTreeNode = PickRequired<Node, "width" | "height"> &
+  Node<
+    ServerTreeNodeData & {
+      groupBottomY: number;
+      groupLeftX: number;
+      groupMaxHeight: number;
+      groupMaxWidth: number;
+      groupRightX: number;
+      groupTopY: number;
+      marginBottom: number;
+      marginRight: number;
+      loadingChildren?: boolean;
+      loadingParents?: boolean;
+      loadingSideAfter?: boolean;
+      loadingSideBefore?: boolean;
+    }
+  >;
 
 export type ClientTree = {
   nodes: LayoutTreeNode[];

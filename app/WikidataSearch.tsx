@@ -46,7 +46,7 @@ const wikidataItemToServerTreeNode = (item: WikidataItem): ServerTreeNode => {
       childCount: 0,
       parentCount: 0,
     },
-    type: "personNode",
+    type: "PERSON_NODE",
   };
 
   return rootNode;

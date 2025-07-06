@@ -2,10 +2,9 @@ import {
   BaseEdge,
   EdgeLabelRenderer,
   EdgeProps,
-  getBezierPath,
+  getSmoothStepPath,
 } from "@xyflow/react";
 
-// Custom edge component to better display relationship labels
 export const PersonEdge = ({
   id,
   sourceX,
@@ -16,14 +15,17 @@ export const PersonEdge = ({
   targetPosition,
   style = {},
   label,
+  target,
 }: EdgeProps) => {
-  const [edgePath, labelX, labelY] = getBezierPath({
+  const [edgePath, labelX, labelY, offsetX, offsetY] = getSmoothStepPath({
     sourceX,
     sourceY,
     sourcePosition,
     targetX,
     targetY,
     targetPosition,
+    offset: 0,
+    borderRadius: 16,
   });
 
   return (
@@ -32,8 +34,8 @@ export const PersonEdge = ({
         id={id}
         path={edgePath}
         style={{
-          strokeWidth: 2,
-          stroke: "#b1b1b7",
+          strokeWidth: 6,
+          stroke: "grey",
           ...style,
         }}
       />
@@ -41,7 +43,7 @@ export const PersonEdge = ({
         <div
           style={{
             position: "absolute",
-            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+            transform: `translate(-50%, -50%) translate(${targetX}px,${labelY}px)`,
             fontSize: 12,
             fontWeight: 500,
             background: "rgba(0, 0, 0, 0.8)",
@@ -50,7 +52,7 @@ export const PersonEdge = ({
             borderRadius: "4px",
             pointerEvents: "none",
             zIndex: 10,
-            maxWidth: "200px",
+            maxWidth: "200px", // Using fixed width since we can't get dynamic width from target
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",

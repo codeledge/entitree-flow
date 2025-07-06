@@ -10,7 +10,7 @@ const familyNodes: ServerTreeNode[] = [
       label: "Super Granpa",
       description: randomParagraph(),
     },
-    type: "personNode",
+    type: "PERSON_NODE",
   },
   {
     id: "2",
@@ -19,7 +19,7 @@ const familyNodes: ServerTreeNode[] = [
       label: "Super Granma",
       description: randomParagraph(),
     },
-    type: "personNode",
+    type: "PERSON_NODE",
   },
   {
     id: "3",
@@ -28,7 +28,7 @@ const familyNodes: ServerTreeNode[] = [
       label: "Granpa",
       description: randomParagraph(),
     },
-    type: "personNode",
+    type: "PERSON_NODE",
   },
   {
     id: "4",
@@ -36,7 +36,7 @@ const familyNodes: ServerTreeNode[] = [
       id: "4",
       label: "pa",
     },
-    type: "personNode",
+    type: "PERSON_NODE",
   },
   {
     id: "5",
@@ -44,7 +44,7 @@ const familyNodes: ServerTreeNode[] = [
       id: "5",
       label: "me",
     },
-    type: "personNode",
+    type: "PERSON_NODE",
   },
   {
     id: "6",
@@ -52,7 +52,7 @@ const familyNodes: ServerTreeNode[] = [
       id: "6",
       label: "gis",
     },
-    type: "personNode",
+    type: "PERSON_NODE",
   },
   {
     id: "7",
@@ -60,7 +60,7 @@ const familyNodes: ServerTreeNode[] = [
       id: "7",
       label: "alby",
     },
-    type: "personNode",
+    type: "PERSON_NODE",
   },
   {
     id: "8",
@@ -68,7 +68,7 @@ const familyNodes: ServerTreeNode[] = [
       id: "8",
       label: "mimmo",
     },
-    type: "personNode",
+    type: "PERSON_NODE",
   },
   {
     id: "9",
@@ -76,7 +76,7 @@ const familyNodes: ServerTreeNode[] = [
       id: "9",
       label: "sis",
     },
-    type: "personNode",
+    type: "PERSON_NODE",
   },
   {
     id: "10",
@@ -84,7 +84,7 @@ const familyNodes: ServerTreeNode[] = [
       id: "10",
       label: "uncle",
     },
-    type: "personNode",
+    type: "PERSON_NODE",
   },
   {
     id: "11",
@@ -92,7 +92,7 @@ const familyNodes: ServerTreeNode[] = [
       id: "11",
       label: "aunty",
     },
-    type: "personNode",
+    type: "PERSON_NODE",
   },
 ];
 

@@ -1,12 +1,11 @@
 import { useTreeLayout } from "@/hooks/useTreeLayout";
 import { trpcReact } from "@/trpc/trpcReact";
 import { LayoutTreeNode, ServerTree } from "@/types/TreeNode";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import PersonIcon from "@mui/icons-material/Person";
-import { Avatar, Box, Button, Sheet, Typography } from "@mui/joy";
+import { Avatar, Box, Sheet, Typography } from "@mui/joy";
 import { Handle, NodeProps, Position, useReactFlow } from "@xyflow/react";
 import { useCallback } from "react";
+import { ExpandContractButton } from "./ExpandContractButton";
 
 export const PersonNode = (node: NodeProps<LayoutTreeNode>) => {
   const { getEdges, getNodes, getNode, updateNodeData } =
@@ -110,23 +109,11 @@ export const PersonNode = (node: NodeProps<LayoutTreeNode>) => {
       />
 
       {!!node.data.parentCount && (
-        <Button
+        <ExpandContractButton
+          count={node.data.parentCount}
+          position="top"
           onClick={() => {}}
-          size="sm"
-          sx={{
-            position: "absolute",
-            top: -26,
-            left: "50%",
-            transform: "translateX(-50%)",
-            fontSize: 10,
-            padding: "2px 4px 2px 0",
-            minHeight: 16,
-          }}
-          variant="plain"
-          color="neutral"
-        >
-          <KeyboardArrowUpIcon /> {node.data.parentCount}
-        </Button>
+        />
       )}
       <Box
         sx={{
@@ -193,36 +180,13 @@ export const PersonNode = (node: NodeProps<LayoutTreeNode>) => {
         </Box>
       </Box>
       {!!node.data.childCount && (
-        <Button
-          onClick={() => {
-            toggleChildren(node.id);
-          }}
-          size="sm"
-          sx={{
-            position: "absolute",
-            bottom: -26,
-            left: "50%",
-            transform: "translateX(-50%)",
-            fontSize: 10,
-            padding: "2px 4px 2px 0",
-            minHeight: 16,
-          }}
-          variant="plain"
-          color="neutral"
-        >
-          {node.data.loadingChildren ? (
-            <>loading</>
-          ) : (
-            <>
-              {node.data.showChildren ? (
-                <KeyboardArrowUpIcon />
-              ) : (
-                <KeyboardArrowDownIcon />
-              )}{" "}
-              {node.data.childCount}
-            </>
-          )}
-        </Button>
+        <ExpandContractButton
+          count={node.data.childCount}
+          position="bottom"
+          onClick={() => toggleChildren(node.id)}
+          isExpanded={node.data.showChildren}
+          isLoading={node.data.loadingChildren}
+        />
       )}
     </Sheet>
   );

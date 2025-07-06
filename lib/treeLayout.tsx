@@ -8,19 +8,21 @@ export const treeLayout = (
   nodes: InputNode[],
   edges: Edge[],
   options: {
-    defaultNodeWidth?: number;
-    defaultNodeHeight?: number;
-    nodeMinSpacing?: number;
+    defaultNodeWidth: number;
+    defaultNodeHeight: number;
+    nodeSiblingMinSeparation: number;
+    nodeGenerationSeparation: number;
     outEdgeFilter?: (edge: Edge) => boolean;
     sideBeforeEdgeFilter?: (edge: Edge) => boolean;
     sideAfterEdgeFilter?: (edge: Edge) => boolean;
     inEdgeFilter?: (edge: Edge) => boolean;
-  } = {}
+  } = {
+    defaultNodeWidth: 250,
+    defaultNodeHeight: 100,
+    nodeSiblingMinSeparation: 80,
+    nodeGenerationSeparation: 80,
+  }
 ): ClientTree => {
-  const nodeMinSpacing = options.nodeMinSpacing || 80;
-  const defaultNodeWidth = options.defaultNodeWidth || 250;
-  const defaultNodeHeight = options.defaultNodeHeight || 100;
-
   let root: InputNode | undefined;
 
   const inputNodesMap = nodes.reduce((acc, node) => {
@@ -35,8 +37,8 @@ export const treeLayout = (
     throw new Error("No root node found");
   }
 
-  const rootWidth = root.width || defaultNodeWidth;
-  const rootHeight = root.height || defaultNodeHeight;
+  const rootWidth = root.width || options.defaultNodeWidth;
+  const rootHeight = root.height || options.defaultNodeHeight;
 
   const outputNodesMap: HashMap<LayoutTreeNode> = {
     [root.id]: {
@@ -52,8 +54,8 @@ export const treeLayout = (
         groupMaxHeight: rootHeight,
         groupMaxWidth: rootWidth,
         groupRightX: rootWidth,
-        marginBottom: nodeMinSpacing,
-        marginRight: nodeMinSpacing,
+        marginBottom: options.nodeGenerationSeparation,
+        marginRight: options.nodeSiblingMinSeparation,
         isRoot: true,
       },
     },
@@ -78,33 +80,35 @@ export const treeLayout = (
       let x = currentNode.position.x;
       if (previousEdge) {
         const previousNode = outputNodesMap[previousEdge.target];
-        x = previousNode.position!.x + previousNode.width! + nodeMinSpacing;
+        x =
+          previousNode.position.x +
+          previousNode.width +
+          options.nodeSiblingMinSeparation;
       }
 
       outputEdgesMap[edge.id] = edge;
 
       outputNodesMap[child.id] = {
         ...child,
-        width: child.width || defaultNodeWidth,
-        height: child.height || defaultNodeHeight,
+        width: child.width || options.defaultNodeWidth,
+        height: child.height || options.defaultNodeHeight,
         position: {
           x,
-          y: currentNode.position.y + currentNode.height! + nodeMinSpacing,
-        },
-        style: {
-          width: child.width || defaultNodeWidth,
-          height: child.height || defaultNodeHeight,
+          y:
+            currentNode.position.y +
+            currentNode.height! +
+            options.nodeGenerationSeparation,
         },
         data: {
           ...child.data,
           groupTopY: 0,
           groupLeftX: 0,
-          groupBottomY: child.height || defaultNodeHeight,
-          groupMaxHeight: child.height || defaultNodeHeight,
-          groupMaxWidth: child.width || defaultNodeWidth,
-          groupRightX: child.width || defaultNodeWidth,
-          marginBottom: nodeMinSpacing,
-          marginRight: nodeMinSpacing,
+          groupBottomY: child.height || options.defaultNodeHeight,
+          groupMaxHeight: child.height || options.defaultNodeHeight,
+          groupMaxWidth: child.width || options.defaultNodeWidth,
+          groupRightX: child.width || options.defaultNodeWidth,
+          marginBottom: options.nodeSiblingMinSeparation,
+          marginRight: options.nodeSiblingMinSeparation,
         },
       };
 
@@ -112,7 +116,61 @@ export const treeLayout = (
     });
   };
 
+  const drillParents = (currentNode: LayoutTreeNode, depth: number) => {
+    const parentEdges = edges
+      .filter((edge) => edge.target === currentNode.id)
+      .filter(options?.inEdgeFilter || (() => true));
+
+    if (currentNode.data.showParents === false) return;
+    parentEdges.forEach((edge, edgeIndex) => {
+      const parent = inputNodesMap[edge.source];
+
+      if (!parent) {
+        return;
+      }
+
+      const previousEdge = parentEdges[edgeIndex - 1];
+      let x = currentNode.position.x;
+      if (previousEdge) {
+        const previousNode = outputNodesMap[previousEdge.source];
+        x =
+          previousNode.position.x +
+          previousNode.width +
+          options.nodeSiblingMinSeparation;
+      }
+
+      outputEdgesMap[edge.id] = edge;
+
+      outputNodesMap[parent.id] = {
+        ...parent,
+        width: parent.width || options.defaultNodeWidth,
+        height: parent.height || options.defaultNodeHeight,
+        position: {
+          x,
+          y:
+            currentNode.position.y -
+            (parent.height || options.defaultNodeHeight) -
+            options.nodeGenerationSeparation,
+        },
+        data: {
+          ...parent.data,
+          groupTopY: 0,
+          groupLeftX: 0,
+          groupBottomY: parent.height || options.defaultNodeHeight,
+          groupMaxHeight: parent.height || options.defaultNodeHeight,
+          groupMaxWidth: parent.width || options.defaultNodeWidth,
+          groupRightX: parent.width || options.defaultNodeWidth,
+          marginBottom: options.nodeGenerationSeparation,
+          marginRight: options.nodeSiblingMinSeparation,
+        },
+      };
+
+      drillParents(outputNodesMap[parent.id], depth + 1);
+    });
+  };
+
   drillChildren(outputNodesMap[root.id], 1);
+  drillParents(outputNodesMap[root.id], 1);
 
   return {
     nodes: Object.values(outputNodesMap),

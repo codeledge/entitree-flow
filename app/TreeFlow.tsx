@@ -1,5 +1,5 @@
-import { PersonEdge } from "@/edges/PersonEdge";
-import { PersonNode } from "@/nodes/PersonNode";
+import { edgeTypes } from "@/flowTypes/edgeTypes";
+import { nodeTypes } from "@/flowTypes/nodeTypes";
 import { Layer } from "@/types/Layer";
 import { ClientTree } from "@/types/TreeNode";
 import { Button, ButtonGroup } from "@mui/joy";
@@ -12,27 +12,12 @@ import {
   useNodesState,
   useReactFlow,
 } from "@xyflow/react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 export const TreeFlow = ({ initialTree }: { initialTree: ClientTree }) => {
   const [layers, setLayers] = useState<Layer[]>([]);
   const [nodes, _setNodes, onNodesChange] = useNodesState(initialTree.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialTree.edges);
-
-  // Memoize nodeTypes and edgeTypes to prevent recreation on every render
-  const nodeTypes = useMemo(
-    () => ({
-      personNode: PersonNode,
-    }),
-    []
-  );
-
-  const edgeTypes = useMemo(
-    () => ({
-      PERSON_EDGE: PersonEdge,
-    }),
-    []
-  );
 
   return (
     <ReactFlow

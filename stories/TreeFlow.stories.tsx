@@ -100,12 +100,12 @@ export const Onechild: Story = {
             isRoot: true,
             childCount: 1,
           },
-          type: "personNode",
+          type: "PERSON_NODE",
         },
         {
           id: incrementalId().toString(),
           data: { ...randomServerTreeNode() },
-          type: "personNode",
+          type: "PERSON_NODE",
         },
       ];
 
