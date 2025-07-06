@@ -1,6 +1,6 @@
 import { InputNode, treeLayout } from "@/lib/treeLayout";
 import { LayoutTreeNode } from "@/types/TreeNode";
-import { Edge, MarkerType, useReactFlow } from "@xyflow/react";
+import { Edge, useReactFlow } from "@xyflow/react";
 import { useCallback } from "react";
 
 export const useTreeLayout = () => {
@@ -8,22 +8,13 @@ export const useTreeLayout = () => {
 
   const onLayout = useCallback(
     (preNodes: InputNode[], preEdges: Edge[]) => {
+      console.log("onLayout");
       const layouted = treeLayout(preNodes, preEdges);
 
-      // Ensure edges have proper styling and custom type
+      // Ensure edges have proper styling and PERSON_EDGE type
       const styledEdges = layouted.edges.map((edge) => ({
         ...edge,
-        type: "custom",
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          width: 20,
-          height: 20,
-          color: "#64748b",
-        },
-        style: {
-          strokeWidth: 2,
-          stroke: "#64748b",
-        },
+        type: "PERSON_EDGE",
       }));
 
       setNodes(layouted.nodes);

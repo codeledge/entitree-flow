@@ -1,7 +1,8 @@
 import { useTreeLayout } from "@/hooks/useTreeLayout";
 import { trpcReact } from "@/trpc/trpcReact";
 import { LayoutTreeNode, ServerTree } from "@/types/TreeNode";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import PersonIcon from "@mui/icons-material/Person";
 import { Avatar, Box, Button, Sheet, Typography } from "@mui/joy";
 import { Handle, NodeProps, Position, useReactFlow } from "@xyflow/react";
@@ -99,18 +100,13 @@ export const PersonNode = (node: NodeProps<LayoutTreeNode>) => {
         type="target"
         position={Position.Top}
         style={{
-          background: "#64748b",
-          width: 8,
-          height: 8,
-          border: "2px solid #fff",
+          border: "none",
         }}
       />
       <Handle
         type="source"
         position={Position.Bottom}
-        style={{
-          display: "none",
-        }}
+        style={{ border: "none" }}
       />
 
       {!!node.data.parentCount && (
@@ -129,7 +125,7 @@ export const PersonNode = (node: NodeProps<LayoutTreeNode>) => {
           variant="plain"
           color="neutral"
         >
-          <ArrowDropUpIcon /> {node.data.parentCount}
+          <KeyboardArrowUpIcon /> {node.data.parentCount}
         </Button>
       )}
       <Box
@@ -218,7 +214,12 @@ export const PersonNode = (node: NodeProps<LayoutTreeNode>) => {
             <>loading</>
           ) : (
             <>
-              <ArrowDropUpIcon /> {node.data.childCount}
+              {node.data.showChildren ? (
+                <KeyboardArrowUpIcon />
+              ) : (
+                <KeyboardArrowDownIcon />
+              )}{" "}
+              {node.data.childCount}
             </>
           )}
         </Button>

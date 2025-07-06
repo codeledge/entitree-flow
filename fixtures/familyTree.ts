@@ -102,12 +102,14 @@ const familyEdges: Edge[] = [
     source: familyNodes[0].id,
     label: `has`,
     target: familyNodes[2].id,
+    type: "PERSON_EDGE",
   },
   {
     id: incrementalId().toString(),
     source: familyNodes[1].id,
     label: `has`,
     target: familyNodes[2].id,
+    type: "PERSON_EDGE",
   },
 
   {
@@ -115,30 +117,35 @@ const familyEdges: Edge[] = [
     source: familyNodes[2].id,
     label: randomParagraph(),
     target: familyNodes[3].id,
+    type: "PERSON_EDGE",
   },
   {
     id: incrementalId().toString(),
     source: familyNodes[3].id,
     label: `has`,
     target: familyNodes[4].id,
+    type: "PERSON_EDGE",
   },
   {
     id: incrementalId().toString(),
     source: familyNodes[4].id,
     label: `married to`,
     target: familyNodes[5].id,
+    type: "PERSON_EDGE",
   },
   {
     id: incrementalId().toString(),
     source: familyNodes[4].id,
     label: `has`,
     target: familyNodes[6].id,
+    type: "PERSON_EDGE",
   },
   {
     id: incrementalId().toString(),
     source: familyNodes[4].id,
     label: `has`,
     target: familyNodes[7].id,
+    type: "PERSON_EDGE",
   },
 ];
 
